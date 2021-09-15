@@ -6,6 +6,21 @@ import (
 )
 
 func init() {
-	beego.Router("/", &controllers.MainController{})
-	beego.Router("/auth", &controllers.LoginController{})
+	ns := beego.NewNamespace("/exam",
+
+		// 认证
+		beego.NSNamespace("/auth/v1/",
+			beego.NSRouter("/login", &controllers.LoginController{}, "post:Login"),
+			beego.NSRouter("/logout", &controllers.LoginController{}, "post:Logout"),
+		),
+
+		// 认证
+		beego.NSNamespace("/auth/v1/",
+			beego.NSRouter("/login", &controllers.LoginController{}, "post:Login"),
+			beego.NSRouter("/logout", &controllers.LoginController{}, "post:Logout"),
+		),
+	)
+
+	beego.AddNamespace(ns)
+
 }

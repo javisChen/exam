@@ -1,15 +1,31 @@
 package core
 
+type ResponseCode string
+
+const (
+	SuccessMsg string = "success"
+
+	SuccessCode ResponseCode = "0"
+	ErrorCode   ResponseCode = "50000"
+)
+
 type ServerResponse struct {
-	Code string      `json:"code,omitempty"`
-	Data interface{} `json:"data,omitempty"`
-	Msg  string      `json:"msg,omitempty"`
+	Code ResponseCode `json:"code,omitempty"`
+	Data interface{}  `json:"data,omitempty"`
+	Msg  string       `json:"msg,omitempty"`
 }
 
-func ok(data interface{}) ServerResponse {
+func success(data interface{}) ServerResponse {
 	return ServerResponse{
-		Code: "0",
+		Code: SuccessCode,
 		Data: data,
-		Msg:  "success",
+		Msg:  SuccessMsg,
+	}
+}
+
+func error(msg string) ServerResponse {
+	return ServerResponse{
+		Code: ErrorCode,
+		Msg:  msg,
 	}
 }

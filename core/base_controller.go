@@ -6,8 +6,12 @@ type BaseController struct {
 	web.Controller
 }
 
-func (t BaseController) Ok(data interface{}) {
-	res := ok(data)
-	t.Data["json"] = res
-	_ = t.ServeJSON() //对json进行序列化输出
+func (t BaseController) Success(data ...interface{}) {
+	t.Data["json"] = success(data)
+	_ = t.ServeJSON()
+}
+
+func (t BaseController) Error(msg string) {
+	t.Data["json"] = error(msg)
+	_ = t.ServeJSON()
 }

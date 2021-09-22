@@ -1,9 +1,10 @@
 package core
 
 import (
-	"encoding/json"
 	"exam/utils"
+	json2 "exam/utils/json"
 	"github.com/beego/beego/v2/server/web"
+	"github.com/mitchellh/mapstructure"
 )
 
 type BaseController struct {
@@ -23,8 +24,18 @@ func (t BaseController) Error(msg string) {
 }
 
 func (t BaseController) GetJsonParam() map[string]interface{} {
-	m := make(map[string]interface{})
-	err := json.Unmarshal(t.Ctx.Input.RequestBody, &m)
+	v := make(map[string]interface{})
+	err := json2.FromBytes(t.Ctx.Input.RequestBody, &v)
 	utils.TryThrowError(err)
-	return m
+	return v
+}
+
+func (t BaseController) ParseFromJsonParam(v interface{}) interface{} {
+	result := make(map[string]interface{})
+	err := json2.FromBytes(t.Ctx.Input.RequestBody, &result)
+	utils.TryThrowError(err)
+
+	err = mapstructure.Decode(result, &v)
+	utils.TryThrowError(err)
+	return v
 }

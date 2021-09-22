@@ -21,7 +21,7 @@ func (c LoginController) Login() {
 	if user.Password != password {
 		c.Error("用户名或密码有误")
 	}
-	c.SetSession("login_user", user)
+	c.SetSession("login_user", &user)
 	c.Success()
 }
 

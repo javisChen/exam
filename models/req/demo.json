@@ -1,0 +1,18 @@
+{
+  "title": "试卷A",
+  "questions": [
+    {
+      "title": "你是男生还是女生？",
+      "type": 1,
+      "options": [
+        {
+          "title": "男"
+        },
+        {
+          "title": "女"
+        }
+      ],
+      "answer": 1
+    }
+  ]
+}

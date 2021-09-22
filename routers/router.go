@@ -17,6 +17,7 @@ func init() {
 		// 试卷
 		beego.NSNamespace("/paper/v1/",
 			beego.NSRouter("/list", &controllers.PagerController{}, "post:List"),
+			beego.NSRouter("/create", &controllers.PagerController{}, "post:Create"),
 		),
 	)
 

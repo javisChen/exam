@@ -106,7 +106,7 @@ func (c PagerController) Create() {
 			Title: paperReq.Title,
 		}
 		var err error
-		err = createPaper(err, txOrm, &paper)
+		err = createPaper(txOrm, &paper)
 		if err != nil {
 			return err
 		}
@@ -141,8 +141,7 @@ func createQuestionOptions(index int, option req.QuestionOption, insertQuestionI
 		Title:      option.Title,
 		Seq:        index + 1,
 	}
-	sql := "insert into question_option(question_id, title, seq) values(?, ?, ?)"
-	_, err := txOrm.Raw(sql, insertOption.QuestionId, insertOption.Title, insertOption.Seq).Exec()
+	_, err := questionOptionDao.Insert(&insertOption, txOrm)
 	if err != nil {
 		logs.Error("新增试卷题目选项失败 -> %s", err)
 		return err
@@ -158,10 +157,7 @@ func createQuestions(paperId int64, question req.Questions, txOrm orm.TxOrmer) (
 		Score:   5,
 		Answer:  strconv.Itoa(question.Answer),
 	}
-	sql := "insert into question(paper_id, title, type , score, answer) values(?, ?, ?, ?, ?)"
-	result, err := txOrm.Raw(sql, insertQuestion.PaperId, insertQuestion.Title, insertQuestion.Type,
-		insertQuestion.Score, insertQuestion.Answer).Exec()
-	insertQuestion.Id, _ = result.LastInsertId()
+	_, err := questionDao.Insert(insertQuestion, txOrm)
 	if err != nil {
 		logs.Error("新增试卷题目失败 -> %s", err)
 		return models.Question{}, err
@@ -169,11 +165,8 @@ func createQuestions(paperId int64, question req.Questions, txOrm orm.TxOrmer) (
 	return insertQuestion, nil
 }
 
-func createPaper(err error, txOrm orm.TxOrmer, paper *models.Paper) error {
-	sql := "insert into paper(title) values(?)"
-	result, err := txOrm.Raw(sql, paper.Title).Exec()
-	lastInsertId, _ := result.LastInsertId()
-	paper.Id = lastInsertId
+func createPaper(txOrm orm.TxOrmer, paper *models.Paper) error {
+	_, err := paperDao.Insert(paper, txOrm)
 	if err != nil {
 		logs.Error("新增试卷失败 -> %s", err)
 		return err

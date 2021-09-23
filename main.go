@@ -12,7 +12,6 @@ import (
 func main() {
 
 	logs.SetLevel(logs.LevelDebug)
-
 	_ = orm.RegisterDriver("mysql", orm.DRMySQL)
 	dbUrl, _ := beego.AppConfig.String("datasource.url")
 	_ = orm.RegisterDataBase("default", "mysql", dbUrl)

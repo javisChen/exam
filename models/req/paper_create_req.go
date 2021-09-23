@@ -14,5 +14,5 @@ type Questions struct {
 
 type QuestionOption struct {
 	Title string `json:"title"`
-	Code  int    `json:"code"`
+	Seq   int    `json:"seq"`
 }

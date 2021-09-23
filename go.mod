@@ -5,9 +5,12 @@ go 1.17
 require github.com/beego/beego/v2 v2.0.1
 
 require (
-	github.com/go-sql-driver/mysql v1.5.0
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/json-iterator/go v1.1.10
+	github.com/mitchellh/mapstructure v1.3.3
 	github.com/smartystreets/goconvey v1.6.4
+	gorm.io/driver/mysql v1.1.2
+	gorm.io/gorm v1.21.15
 )
 
 require (
@@ -16,9 +19,10 @@ require (
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.2 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

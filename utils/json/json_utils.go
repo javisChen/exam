@@ -1,6 +1,9 @@
 package json
 
-import jsoniter "github.com/json-iterator/go"
+import (
+	"github.com/beego/beego/v2/adapter/logs"
+	jsoniter "github.com/json-iterator/go"
+)
 
 var jiter jsoniter.API
 
@@ -22,7 +25,11 @@ func FromBytes(byte []byte, v interface{}) error {
 	return err
 }
 
-func ToStr(v interface{}) (string, error) {
+func ToJSONStr(v interface{}) string {
 	str, err := jiter.MarshalToString(v)
-	return str, err
+	if err != nil {
+		logs.Error("interface{} to string has error {}", err)
+		return ""
+	}
+	return str
 }

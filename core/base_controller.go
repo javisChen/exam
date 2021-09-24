@@ -5,6 +5,7 @@ import (
 	"exam/utils/json"
 	"github.com/beego/beego/v2/server/web"
 	"github.com/mitchellh/mapstructure"
+	"strings"
 )
 
 type BaseController struct {
@@ -12,13 +13,13 @@ type BaseController struct {
 }
 
 func (t BaseController) Success(data ...interface{}) {
-	t.Data["json"] = success(data)
+	t.Data["json"] = Success(data)
 	_ = t.ServeJSON()
 	t.StopRun()
 }
 
 func (t BaseController) Error(msg string) {
-	t.Data["json"] = error(msg)
+	t.Data["json"] = Err(msg)
 	_ = t.ServeJSON()
 	t.StopRun()
 }
@@ -38,4 +39,10 @@ func (t BaseController) ParseFromJsonParam(v interface{}) interface{} {
 	err = mapstructure.Decode(result, &v)
 	utils.TryThrowError(err)
 	return v
+}
+
+func (t BaseController) GetAccessToken() string {
+	authorization := t.Ctx.Input.Header("Authorization")
+	accessToken := strings.Split(authorization, "Bearer ")[1]
+	return accessToken
 }

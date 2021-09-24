@@ -91,6 +91,8 @@ func questionOptionsGroupByQuestionId(questionIds []int64, questionOptions []mod
 }
 
 func (c PagerController) List() {
+	value := context.Background().Value("curr_user")
+	fmt.Println(value)
 	var papers []models.Paper
 	core.GetOrm().Raw("select * from paper order by gmt_created desc").QueryRows(&papers)
 	c.Success(papers)
@@ -98,7 +100,7 @@ func (c PagerController) List() {
 
 func (c PagerController) Create() {
 	paperReq := c.ParseFromJsonParam(req.PaperCreateReq{}).(req.PaperCreateReq)
-	marshal, _ := jsonUtils.ToStr(paperReq)
+	marshal := jsonUtils.ToJSONStr(paperReq)
 	fmt.Println("创建问卷参数 -> ", marshal)
 	err := core.GetOrm().DoTx(func(ctx context.Context, txOrm orm.TxOrmer) error {
 		// step1:新增试卷

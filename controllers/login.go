@@ -3,8 +3,15 @@ package controllers
 import (
 	"exam/core"
 	"exam/models"
+	"exam/models/resp"
+	"exam/utils/json"
+	"exam/utils/redis"
+	"exam/utils/uuid"
 	"fmt"
+	"time"
 )
+
+var loginUserRedisKey = "login_user:tk:%s"
 
 type LoginController struct {
 	core.BaseController
@@ -21,11 +28,22 @@ func (c LoginController) Login() {
 	if user.Password != password {
 		c.Error("用户名或密码有误")
 	}
-	c.SetSession("login_user", &user)
-	c.Success()
+
+	uuidStr := uuid.UUID()
+	user.Password = ""
+	err := redis.SetWithExpire(fmt.Sprintf(loginUserRedisKey, uuidStr), json.ToJSONStr(user), 24, time.Hour)
+	if err != nil {
+		c.Error(err.Error())
+	}
+	c.Success(resp.LoginResp{AccessToken: uuidStr})
 }
 
 func (c LoginController) Logout() {
-	c.SetSession("login_user", nil)
+	accessToken := c.GetAccessToken()
+	result, err := redis.Get(fmt.Sprintf(loginUserRedisKey, accessToken))
+	if err != nil {
+		c.Error(err.Error())
+	}
+	_ = redis.Remove(fmt.Sprintf(loginUserRedisKey, result))
 	c.Success()
 }

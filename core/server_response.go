@@ -3,7 +3,7 @@ package core
 type ResponseCode string
 
 const (
-	SuccessMsg string = "success"
+	SuccessMsg string = "Success"
 
 	SuccessCode ResponseCode = "0"
 	ErrorCode   ResponseCode = "50000"
@@ -15,7 +15,7 @@ type ServerResponse struct {
 	Msg  string       `json:"msg,omitempty"`
 }
 
-func success(data interface{}) ServerResponse {
+func Success(data interface{}) ServerResponse {
 	return ServerResponse{
 		Code: SuccessCode,
 		Data: data,
@@ -23,7 +23,7 @@ func success(data interface{}) ServerResponse {
 	}
 }
 
-func error(msg string) ServerResponse {
+func Err(msg string) ServerResponse {
 	return ServerResponse{
 		Code: ErrorCode,
 		Msg:  msg,

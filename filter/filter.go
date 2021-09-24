@@ -10,6 +10,7 @@ import (
 
 func Init() {
 	beego.InsertFilter("/*", beego.BeforeExec, func(ctx *context.Context) {
+		ctx.Input.SetData("user", "123")
 		if ctx.Request.RequestURI != "/exam/auth/v1/login" {
 			authorization := ctx.Input.Header("Authorization")
 			if authorization == "" || strings.Split(authorization, "Bearer ")[1] == "" {

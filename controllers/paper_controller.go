@@ -91,7 +91,7 @@ func questionOptionsGroupByQuestionId(questionIds []int64, questionOptions []mod
 }
 
 func (c PagerController) List() {
-	value := context.Background().Value("curr_user")
+	value := c.Ctx.Input.GetData("user")
 	fmt.Println(value)
 	var papers []models.Paper
 	core.GetOrm().Raw("select * from paper order by gmt_created desc").QueryRows(&papers)

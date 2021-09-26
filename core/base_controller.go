@@ -1,6 +1,7 @@
 package core
 
 import (
+	"exam/security"
 	"exam/utils"
 	"exam/utils/json"
 	"github.com/beego/beego/v2/server/web"
@@ -45,4 +46,9 @@ func (t BaseController) GetAccessToken() string {
 	authorization := t.Ctx.Input.Header("Authorization")
 	accessToken := strings.Split(authorization, "Bearer ")[1]
 	return accessToken
+}
+
+func (t BaseController) GetLoginUser() security.LoginUser {
+	data := t.Ctx.Input.GetData(security.LoginUserKey)
+	return data.(security.LoginUser)
 }

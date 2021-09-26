@@ -4,6 +4,7 @@ import (
 	"context"
 	json2 "encoding/json"
 	"exam/core"
+	"exam/core/db"
 	paperDao "exam/dao/paper"
 	questionDao "exam/dao/question"
 	questionOptionDao "exam/dao/questionoption"
@@ -27,16 +28,16 @@ func (c PagerController) Info() {
 	paperInfoResp := resp.PaperInfoResp{}
 
 	// step1:查询试卷
-	paper := paperDao.SelectById(paperId)
+	paper, _ := paperDao.SelectById(paperId)
 	paperInfoResp.Id = paper.Id
 	paperInfoResp.Title = paper.Title
 
 	// step2:查询试卷题目
-	var questions = questionDao.SelectListByPaperId(paperId)
+	var questions, _ = questionDao.SelectListByPaperId(paperId)
 
 	// step3:查询试卷题和选项
 	questionIds := extractQuestionIds(questions)
-	var questionOptions = questionOptionDao.SelectListByQuestionIds(questionIds)
+	var questionOptions, _ = questionOptionDao.SelectListByQuestionIds(questionIds)
 	questionOptionMap := questionOptionsGroupByQuestionId(questionIds, questionOptions)
 
 	// step4:组装响应体
@@ -94,7 +95,7 @@ func (c PagerController) List() {
 	value := c.Ctx.Input.GetData("user")
 	fmt.Println(value)
 	var papers []models.Paper
-	core.GetOrm().Raw("select * from paper order by gmt_created desc").QueryRows(&papers)
+	db.GetOrm().Raw("select * from paper order by gmt_created desc").QueryRows(&papers)
 	c.Success(papers)
 }
 
@@ -102,7 +103,7 @@ func (c PagerController) Create() {
 	paperReq := c.ParseFromJsonParam(req.PaperCreateReq{}).(req.PaperCreateReq)
 	marshal := jsonUtils.ToJSONStr(paperReq)
 	fmt.Println("创建问卷参数 -> ", marshal)
-	err := core.GetOrm().DoTx(func(ctx context.Context, txOrm orm.TxOrmer) error {
+	err := db.GetOrm().DoTx(func(ctx context.Context, txOrm orm.TxOrmer) error {
 		// step1:新增试卷
 		paper := models.Paper{
 			Title: paperReq.Title,

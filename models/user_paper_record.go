@@ -2,10 +2,10 @@ package models
 
 type UserPagerRecord struct {
 	BaseModel
-	UserId  uint64 `json:"user_id" gorm:"column:user_id"`   // 试卷id,关联paper.id
-	PaperId uint64 `json:"paper_id" gorm:"column:paper_id"` // 试卷id,关联paper.id
-	Score   int    `json:"score" gorm:"column:score"`       // 获得的分数
-	Status  int8   `json:"status" gorm:"column:status"`     // 状态 0-未完成 1-已完成
+	UserId  int64 `json:"user_id" gorm:"column:user_id"`   // 试卷id,关联paper.id
+	PaperId int64 `json:"paper_id" gorm:"column:paper_id"` // 试卷id,关联paper.id
+	Score   int   `json:"score" gorm:"column:score"`       // 获得的分数
+	Status  int8  `json:"status" gorm:"column:status"`     // 状态 0-未完成 1-已完成
 }
 
 func (m *UserPagerRecord) TableName() string {

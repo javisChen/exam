@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"fmt"
 	beego "github.com/beego/beego/v2/server/web"
 	"github.com/go-redis/redis/v8"
 	"strconv"
@@ -17,9 +18,11 @@ func init() {
 	password := beego.AppConfig.DefaultString("redis.password", "")
 	db := beego.AppConfig.DefaultInt("redis.db", 0)
 	client = redis.NewClient(&redis.Options{
-		Addr:     host + ":" + strconv.Itoa(port),
-		Password: password, // no password set
-		DB:       db,       // use default DB
+		Addr:        host + ":" + strconv.Itoa(port),
+		Password:    password, // no password set
+		DB:          db,       // use default DB
+		DialTimeout: 10 * time.Second,
+		PoolTimeout: 2 * time.Second,
 	})
 }
 
@@ -29,7 +32,10 @@ func Set(key string, value interface{}) error {
 
 // 过期时间单位默认为秒
 func SetWithExpire(key string, value interface{}, ttl int64, duration time.Duration) error {
-	return client.Set(ctx, key, value, time.Duration(ttl)*duration).Err()
+	fmt.Println("start", time.Now())
+	err := client.Set(ctx, key, value, time.Duration(ttl)*duration).Err()
+	fmt.Println("end", time.Now())
+	return err
 }
 
 func Get(key string) (string, error) {

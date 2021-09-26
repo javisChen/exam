@@ -15,7 +15,7 @@ func SelectListByPaperId(paperId int64) ([]models.Question, error) {
 
 func Insert(question models.Question, txOrm orm.TxOrmer) (int64, error) {
 	sql := "insert into question(paper_id, title, type , score, answer) values(?, ?, ?, ?, ?)"
-	result, err := db.Exec(sql, question.PaperId, question.Title, question.Type, question.Score, question.Answer)
+	result, err := db.ExecTx(txOrm, sql, question.PaperId, question.Title, question.Type, question.Score, question.Answer)
 	if err != nil {
 		return 0, err
 	}

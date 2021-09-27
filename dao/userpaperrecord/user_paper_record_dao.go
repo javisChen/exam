@@ -21,3 +21,12 @@ func Insert(record models.UserPagerRecord) (int64, error) {
 	record.Id, _ = result.LastInsertId()
 	return result.RowsAffected()
 }
+
+func UpdateStatus(id int64, status int) (int64, error) {
+	sql := "update user_pager_record set status = ? where id = ?"
+	result, err := db.Exec(sql, status, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}

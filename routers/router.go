@@ -38,6 +38,10 @@ func init() {
 			beego.NSNamespace("/user-paper/v1",
 				// 用户开始答卷
 				beego.NSRouter("/create", &controllers.UserPaperController{}, "post:Create"),
+				// 用户答题
+				beego.NSRouter("/answer", &controllers.UserPaperController{}, "post:Answer"),
+				// 用户交卷
+				beego.NSRouter("/finish", &controllers.UserPaperController{}, "post:Finish"),
 			),
 		),
 	)

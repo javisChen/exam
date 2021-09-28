@@ -4,6 +4,7 @@ import (
 	"exam/security"
 	"exam/utils"
 	"exam/utils/json"
+	"fmt"
 	"github.com/beego/beego/v2/server/web"
 	"github.com/mitchellh/mapstructure"
 	"strings"
@@ -50,6 +51,7 @@ func (t BaseController) GetAccessToken() string {
 
 func (t BaseController) GetLoginUser() security.LoginUser {
 	data := t.Ctx.Input.GetData(security.LoginUserKey)
+	fmt.Println(data)
 	return data.(security.LoginUser)
 }
 

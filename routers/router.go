@@ -2,9 +2,7 @@ package routers
 
 import (
 	controllers "exam/controllers"
-	"fmt"
 	beego "github.com/beego/beego/v2/server/web"
-	"github.com/beego/beego/v2/server/web/context"
 )
 
 func init() {
@@ -28,11 +26,6 @@ func init() {
 		// app端
 		beego.NSNamespace("/app",
 
-			beego.NSCond(func(context *context.Context) bool {
-				fmt.Println("false")
-				return true
-			}),
-
 			// 试卷
 			beego.NSNamespace("/paper/v1",
 				// 试卷列表
@@ -44,7 +37,11 @@ func init() {
 			// 用户试卷
 			beego.NSNamespace("/user-paper/v1",
 				// 用户开始答卷
-				beego.NSRouter("/create", &controllers.PagerController{}, "post:List"),
+				beego.NSRouter("/create", &controllers.UserPaperController{}, "post:Create"),
+				// 用户答题
+				beego.NSRouter("/answer", &controllers.UserPaperController{}, "post:Answer"),
+				// 用户交卷
+				beego.NSRouter("/finish", &controllers.UserPaperController{}, "post:Finish"),
 			),
 		),
 	)

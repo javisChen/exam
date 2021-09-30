@@ -1,10 +1,9 @@
-package controllers
+package paper_handler
 
 import (
 	"context"
-	json2 "encoding/json"
-	"exam/core"
 	"exam/core/db"
+	"exam/core/web"
 	paperDao "exam/dao/paper"
 	questionDao "exam/dao/question"
 	questionOptionDao "exam/dao/questionoption"
@@ -13,18 +12,18 @@ import (
 	"exam/models/resp"
 	jsonUtils "exam/utils/json"
 	"fmt"
-	"github.com/beego/beego/v2/adapter/logs"
 	"github.com/beego/beego/v2/client/orm"
+	"github.com/beego/beego/v2/core/logs"
+	"github.com/gin-gonic/gin"
 	"strconv"
 )
 
-type PagerController struct {
-	core.BaseController
-}
-
-func (c PagerController) Info() {
-	jsonParam := c.GetJsonParam()
-	paperId, _ := jsonParam["id"].(json2.Number).Int64()
+func Info(c *gin.Context) {
+	jsonParam, err := web.GetJsonParam(c)
+	if err != nil {
+		web.ErrorWithMsg(c, err.Error())
+	}
+	paperId := int64((*jsonParam)["id"].(float64))
 	paperInfoResp := resp.PaperInfoResp{}
 
 	// step1:查询试卷
@@ -42,7 +41,7 @@ func (c PagerController) Info() {
 
 	// step4:组装响应体
 	paperInfoResp.Questions = assembleQuestionResp(questions, questionOptionMap)
-	c.Success(paperInfoResp)
+	web.Ok(c, paperInfoResp)
 }
 
 func extractQuestionIds(questions []models.Question) []int64 {
@@ -91,19 +90,18 @@ func questionOptionsGroupByQuestionId(questionIds []int64, questionOptions []mod
 	return questionOptionMap
 }
 
-func (c PagerController) List() {
-	value := c.Ctx.Input.GetData("user")
-	fmt.Println(value)
+func List(c *gin.Context) {
 	var papers []models.Paper
 	db.GetOrm().Raw("select * from paper order by gmt_created desc").QueryRows(&papers)
-	c.Success(papers)
+	web.Ok(c, papers)
 }
 
-func (c PagerController) Create() {
-	paperReq := c.ParseFromJsonParam(req.PaperCreateReq{}).(req.PaperCreateReq)
+func Create(c *gin.Context) {
+	paperReq := req.PaperCreateReq{}
+	err := c.ShouldBindJSON(req.PaperCreateReq{})
 	marshal := jsonUtils.ToJSONStr(paperReq)
 	fmt.Println("创建问卷参数 -> ", marshal)
-	err := db.GetOrm().DoTx(func(ctx context.Context, txOrm orm.TxOrmer) error {
+	err = db.GetOrm().DoTx(func(ctx context.Context, txOrm orm.TxOrmer) error {
 		// step1:新增试卷
 		paper := models.Paper{
 			Title: paperReq.Title,
@@ -135,7 +133,7 @@ func (c PagerController) Create() {
 	if err != nil {
 		panic(err)
 	}
-	c.Success()
+	web.Ok(c)
 }
 
 func createQuestionOptions(index int, option req.QuestionOption, insertQuestionId int64, txOrm orm.TxOrmer) error {

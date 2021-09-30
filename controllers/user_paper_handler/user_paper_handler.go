@@ -1,22 +1,21 @@
-package controllers
+package user_paper_handler
 
 import (
-	"encoding/json"
-	"exam/core"
+	"exam/core/web"
 	userPaperRecordDao "exam/dao/userpaperrecord"
 	userQuestionRecordDao "exam/dao/userquestionrecord"
 	"exam/models"
+	"github.com/gin-gonic/gin"
 )
 
-type UserPaperController struct {
-	core.BaseController
-}
+func Create(c *gin.Context) {
+	jsonParam, err := web.GetJsonParam(c)
+	if err != nil {
+		web.Error(c)
+	}
+	loginUser := web.GetLoginUser(c)
 
-func (c UserPaperController) Create() {
-	jsonParam := c.GetJsonParam()
-	loginUser := c.GetLoginUser()
-
-	val, _ := jsonParam["paperId"].(json.Number).Int64()
+	val := int64((*jsonParam)["paperId"].(float64))
 	result, _ := userPaperRecordDao.SelectByUserIdAndPaperId(val, loginUser.Id)
 	if result == (models.UserPagerRecord{}) {
 		_, _ = userPaperRecordDao.Insert(models.UserPagerRecord{
@@ -25,26 +24,31 @@ func (c UserPaperController) Create() {
 			PaperId:   val,
 		})
 	}
-	c.Success()
+	web.Ok(c)
 }
 
-func (c UserPaperController) Finish() {
-	jsonParam := c.GetJsonParam()
-	loginUser := c.GetLoginUser()
+func Finish(c *gin.Context) {
+	jsonParam, err := web.GetJsonParam(c)
+	if err != nil {
+		web.Error(c)
+	}
+	loginUser := web.GetLoginUser(c)
 
-	val, _ := jsonParam["paperId"].(json.Number).Int64()
+	val := int64((*jsonParam)["paperId"].(float64))
 	result, _ := userPaperRecordDao.SelectByUserIdAndPaperId(val, loginUser.Id)
 	_, _ = userPaperRecordDao.UpdateStatus(result.Id, 1)
-	c.Success()
+	web.Ok(c)
 }
 
-func (c UserPaperController) Answer() {
-	jsonParam := c.GetJsonParam()
-	loginUser := c.GetLoginUser()
-
-	questionId, _ := jsonParam["questionId"].(json.Number).Int64()
-	paperId, _ := jsonParam["paperId"].(json.Number).Int64()
-	userAnswer, _ := jsonParam["userAnswer"].(string)
+func Answer(c *gin.Context) {
+	jsonParam, err := web.GetJsonParam(c)
+	if err != nil {
+		web.Error(c)
+	}
+	loginUser := web.GetLoginUser(c)
+	questionId := int64((*jsonParam)["questionId"].(float64))
+	paperId := int64((*jsonParam)["paperId"].(float64))
+	userAnswer, _ := (*jsonParam)["userAnswer"].(string)
 	userId := loginUser.Id
 	result, _ := userQuestionRecordDao.SelectByQuestionIdAndUserId(models.UserQuestionRecord{
 		QuestionId: questionId,
@@ -65,5 +69,5 @@ func (c UserPaperController) Answer() {
 			UserAnswer: userAnswer,
 		})
 	}
-	c.Success()
+	web.Ok(c)
 }

@@ -10,18 +10,20 @@ import (
 	beego "github.com/beego/beego/v2/server/web"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 	"net/http"
 )
 
 func main() {
 
-	filter.Init()
+	//filter.Init()
 
 	logs.SetLevel(logs.LevelDebug)
-	_ = orm.RegisterDriver("mysql", orm.DRMySQL)
-	dbUrl, _ := beego.AppConfig.String("datasource.url")
-	_ = orm.RegisterDataBase("default", "mysql", dbUrl)
-	orm.Debug = true
+	//_ = orm.RegisterDriver("mysql", orm.DRMySQL)
+	//dbUrl, _ := beego.AppConfig.String("datasource.url")
+	//_ = orm.RegisterDataBase("default", "mysql", dbUrl)
+	//orm.Debug = true
 
 	r := gin.New()
 

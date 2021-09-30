@@ -46,7 +46,8 @@ func SelectList(sql string, container interface{}, args ...interface{}) (int64, 
 }
 
 func Exec(sql string, args ...interface{}) (sql.Result, error) {
-	err := db.Exec(sql, args)
+	err := db.Exec(sql, args...)
+	//exec := db.Exec("UPDATE orders SET shipped_at = ? WHERE id IN ?", args)
 	fmt.Println(err)
 	return nil, nil
 }
